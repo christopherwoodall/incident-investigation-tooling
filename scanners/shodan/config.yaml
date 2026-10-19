@@ -1,0 +1,50 @@
+# Shodan scanner config: runtime settings, regex patterns, and seeds.
+
+scanner:
+  base_url: "https://api.shodan.io"
+  api_key: "${oc.env:SHODAN_API_KEY,''}"
+  timeout: 90
+  delay: 1.0
+  max_runtime: 300
+  max_results: 50
+  since_hours: null
+  data_dir: "../../data"
+  keyword_templates:
+    - 'http.title:"{keyword}"'
+    - 'http.html:"{keyword}"'
+
+patterns:
+  http_title: '(?i)<title[^>]*>\s*([^<\r\n]{1,160}?)\s*</title>'
+  webhook_uuid: 'webhook\.site/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'
+  ntfy_topic: 'ntfy\.sh/([a-zA-Z0-9_-]{3,64})'
+  tag_param: '(?:uqscan|uqframe|uqtag|uq|zz)=([a-zA-Z0-9_-]+)'
+  agent_marker: '(?i)\b(cairn|strix|openhands|opendevin|openclaw|autogpt|agentgpt|superagi|autogen|crewai|langflow|flowise|dify|mcp inspector|skyvern|browser-use|litellm|open webui|anythingllm|librechat|lobechat|ollama)\b'
+
+seeds:
+  - { name: cairn_title, query: 'http.title:"Cairn"', op: count, tags: [cairn, norforge, panel] }
+  - { name: cairn_html, query: 'http.html:"Cairn"', op: count, tags: [cairn, norforge, panel] }
+  - { name: strix_title, query: 'http.title:"Strix"', op: count, tags: [strix, norforge, panel] }
+  - { name: hermes_title, query: 'http.title:"Hermes"', op: count, tags: [hermes, norforge, broad] }
+  - { name: hermes_agent, query: 'http.title:"Hermes" http.html:"agent"', op: count, tags: [hermes, norforge, panel] }
+  - { name: openhands_title, query: 'http.title:"OpenHands"', op: count, tags: [openhands, code_agent] }
+  - { name: opendevin_title, query: 'http.title:"OpenDevin"', op: count, tags: [opendevin, code_agent] }
+  - { name: openclaw_title, query: 'http.title:"OpenClaw"', op: count, tags: [openclaw, autonomous_agent] }
+  - { name: autogpt_title, query: 'http.title:"AutoGPT"', op: count, tags: [autogpt, autonomous_agent] }
+  - { name: agentgpt_title, query: 'http.title:"AgentGPT"', op: count, tags: [agentgpt, autonomous_agent] }
+  - { name: superagi_title, query: 'http.title:"SuperAGI"', op: count, tags: [superagi, autonomous_agent] }
+  - { name: autogen_studio, query: 'http.title:"AutoGen Studio"', op: count, tags: [autogen, orchestrator] }
+  - { name: crewai_panel, query: 'http.title:"CrewAI" OR http.html:"crewai"', op: count, tags: [crewai, orchestrator] }
+  - { name: langflow_title, query: 'http.title:"Langflow"', op: count, tags: [langflow, workflow] }
+  - { name: flowise_title, query: 'http.title:"Flowise"', op: count, tags: [flowise, workflow] }
+  - { name: dify_title, query: 'http.title:"Dify"', op: count, tags: [dify, workflow] }
+  - { name: n8n_title, query: 'http.title:"n8n"', op: count, tags: [n8n, workflow] }
+  - { name: mcp_inspector, query: 'http.title:"MCP Inspector"', op: count, tags: [mcp, tool_server] }
+  - { name: skyvern_title, query: 'http.title:"Skyvern"', op: count, tags: [skyvern, browser_agent] }
+  - { name: browser_use, query: 'http.title:"Browser Use" OR http.html:"browser-use"', op: count, tags: [browser_use, browser_agent] }
+  - { name: litellm_proxy, query: 'http.title:"LiteLLM"', op: count, tags: [litellm, llm_gateway] }
+  - { name: open_webui, query: 'http.title:"Open WebUI"', op: count, tags: [open_webui, webui] }
+  - { name: anythingllm, query: 'http.title:"AnythingLLM"', op: count, tags: [anythingllm, webui] }
+  - { name: librechat, query: 'http.title:"LibreChat"', op: count, tags: [librechat, webui] }
+  - { name: lobechat, query: 'http.title:"LobeChat"', op: count, tags: [lobechat, webui] }
+  - { name: ollama_banner, query: '"Ollama is running"', op: count, tags: [ollama, inference] }
+  - { name: google_dns_example, query: '8.8.8.8', op: host, tags: [demo, host] }

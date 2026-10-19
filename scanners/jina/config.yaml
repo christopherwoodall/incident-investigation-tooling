@@ -1,0 +1,28 @@
+# Jina AI reader (https://r.jina.ai/<url>) scanner config: runtime settings, regex patterns, and seeds.
+
+scanner:
+  base_url: "https://r.jina.ai/"
+  api_key: "${oc.env:JINA_API_KEY,''}"
+  timeout: 120
+  delay: 10.0
+  retry_sleeps: [60, 120]
+  max_bytes: 200000
+  max_runtime: 600
+  data_dir: "../../data"
+
+patterns:
+  webhook_uuid: 'webhook\.site/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'
+  ntfy_topic: 'ntfy\.sh/([a-zA-Z0-9_-]{3,64})'
+  tag_param: '(?:uqscan|uqframe|uqtag|uq|zz)=([a-zA-Z0-9_-]+)'
+  cachebust: '(cachebust=1)'
+  b64_run: '([A-Za-z0-9+/=]{40,80})'
+  agent_label: '(?i)(claude20\d{4,}|\bresearch[-_][a-z0-9]{4,}\b)'
+  amap_surface: '(?i)\b([a-z0-9.-]*?(?:amap|gaode)\.com)\b'
+
+seeds:
+  - { name: unm_7t6-o, query: "https://goto.unm.edu/7t6-o+", tags: [jina, unm] }
+  - { name: eth_nB1nv, query: "https://u.ethz.ch/nB1nv+?jqpaccess=1", tags: [jina, ethz] }
+  - { name: uvm_tgmtq, query: "https://go.uvm.edu/tgmtq+", tags: [jina, uvm] }
+  - { name: popcat_5vtSk2RG2f, query: "https://url.popcat.xyz/5vtSk2RG2f/info", tags: [jina, popcat] }
+  - { name: tmdc_frontpage, query: "https://t.mdcdev.me/", tags: [jina, mdcdev] }
+  - { name: uoft_maagentxyz99999, query: "https://uoft.me/maagentxyz99999+", tags: [jina, uoft] }

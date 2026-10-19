@@ -1,0 +1,39 @@
+# Passive HTTP / YOURLS shortlink resweep config: runtime settings, regex patterns, and seeds.
+
+scanner:
+  timeout: 45
+  delay: 3.0
+  retry_delay: 5.0
+  min_bytes: 500
+  max_runtime: 300
+  data_dir: "../../data"
+
+patterns:
+  http_title: '(?i)<title[^>]*>\s*([^<\r\n]{1,160}?)\s*</title>'
+  external_link: 'href=["\x27](https?://[^"\x27>\s]+)["\x27]'
+  iso_date: '\b(202\d-\d{2}-\d{2})\b'
+  webhook_uuid: 'webhook\.site/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'
+  ntfy_topic: 'ntfy\.sh/([a-zA-Z0-9_-]{3,64})'
+  tag_param: '(?:uqscan|uqframe|uqtag|uq|zz)=([a-zA-Z0-9_-]+)'
+  httpbin_b64: 'httpbin\.org/base64/([A-Za-z0-9+/=]{20,})'
+  agent_label: '(?i)(claude20\d{4,}|\bresearch[-_][a-z0-9]{4,}\b)'
+
+seeds:
+  - { name: unm_7t6-o, query: "https://goto.unm.edu/7t6-o+", tags: [yourls, unm] }
+  - { name: unm_discvr, query: "https://goto.unm.edu/discvr+", tags: [yourls, unm] }
+  - { name: unm_reso, query: "https://goto.unm.edu/reso+", tags: [yourls, unm] }
+  - { name: unm_urphy21, query: "https://goto.unm.edu/urphy21+", tags: [yourls, unm] }
+  - { name: unm_vbudg, query: "https://goto.unm.edu/vbudg+", tags: [yourls, unm] }
+  - { name: eth_nB1nv, query: "https://u.ethz.ch/nB1nv+?jqpaccess=1", tags: [yourls, ethz] }
+  - { name: uvm_-4s0q, query: "https://go.uvm.edu/-4s0q+", tags: [yourls, uvm] }
+  - { name: uvm_tgmtq, query: "https://go.uvm.edu/tgmtq+", tags: [yourls, uvm] }
+  - { name: uvm_xc26, query: "https://go.uvm.edu/xc26+", tags: [yourls, uvm] }
+  - { name: popcat_5vtSk2RG2f, query: "https://url.popcat.xyz/5vtSk2RG2f/info", tags: [shortlink, popcat] }
+  - { name: popcat_IRZTIxDlZ, query: "https://url.popcat.xyz/IRZTIxDlZ/info", tags: [shortlink, popcat] }
+  - { name: tmdc_frontpage, query: "https://t.mdcdev.me/", tags: [yourls, mdcdev] }
+  - { name: tmdc_robots, query: "https://t.mdcdev.me/robots.txt", tags: [yourls, mdcdev] }
+  - { name: tmdc_sitemap, query: "https://t.mdcdev.me/sitemap.xml", tags: [yourls, mdcdev] }
+  - { name: tmdc_squarespacefreeemail934785, query: "https://t.mdcdev.me/squarespacefreeemail934785+", tags: [yourls, mdcdev] }
+  - { name: tmdc_evegelendiyarbakrescort772509, query: "https://t.mdcdev.me/evegelendiyarbakrescort772509+", tags: [yourls, mdcdev] }
+  - { name: tmdc_mattressstoresaroundmyarea909270, query: "https://t.mdcdev.me/mattressstoresaroundmyarea909270+", tags: [yourls, mdcdev] }
+  - { name: uoft_maagentxyz99999, query: "https://uoft.me/maagentxyz99999+", tags: [yourls, uoft] }

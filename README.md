@@ -17,6 +17,8 @@ Each tool lives in its own subdirectory with its own README.
 
 - [Arquivo judge](judges/arquivo/): Screens preserved Arquivo.pt evidence for hacking attempts, with independent AI-agent and coordination assessments and source-cited review queues.
 
+- [Scanners](scanners/): Plugin-based scanner framework for hunting exposed AI agent interfaces and collecting points of interest into screening-compatible corpora.
+
 ## Contributing
 
 Contributions are welcome. Follow the rules in [CONTRIBUTING.md](CONTRIBUTING.md) and open a pull request.
