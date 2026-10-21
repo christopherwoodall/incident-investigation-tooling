@@ -17,7 +17,7 @@ Each tool lives in its own subdirectory with its own README.
 
 - [Arquivo judge](judges/arquivo/): Screens preserved Arquivo.pt evidence for hacking attempts, with independent AI-agent and coordination assessments and source-cited review queues.
 
-- [Scanners](scanners/): Plugin-based scanner framework for hunting exposed AI agent interfaces and collecting points of interest into screening-compatible corpora.
+- [Scanners](scanners/): Self-contained `uv` scanners and search CLIs for collecting Shodan, urlquery.net, YOURLS, Jina, Wayback CDX, urlscan.io, crt.sh, ntfy.sh, RepoScout, and package registry observations into a unified MISP-shaped JSONL format.
 
 ## Contributing
 
