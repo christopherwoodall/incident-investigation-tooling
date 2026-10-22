@@ -1,0 +1,30 @@
+  shodan:
+    priority: P0
+    notes:
+      - "Requires SHODAN_API_KEY in .env or host environment"
+    provenance:
+      - "https://api.shodan.io"
+    base_url: "https://api.shodan.io"
+    api_key: "${oc.env:SHODAN_API_KEY,''}"
+    user_agent: "Shodan-Python/1.31.0"
+    timeout: 60.0
+    delay: 2.0
+    limit: 50
+    scrape:
+      enabled: true
+      window_hours: 168
+      # Uncomment to automatically poll alerts + incremental lookback queries
+      # queries:
+      #   - 'http.title:"Cairn"'
+      #   - "hysandbox.tencent-cloud.com"
+    search:
+      enabled: true
+      # queries:
+      #   - 'http.title:"Cairn"'
+      #   - 'http.html:"mcp.json"'
+    download:
+      enabled: true
+      # Accepts IPs (198.51.100.1), domains (example.org), or "alerts"
+      # queries:
+      #   - "198.51.100.1"
+      #   - "example.org"

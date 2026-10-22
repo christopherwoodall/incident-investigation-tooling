@@ -1,0 +1,45 @@
+[project]
+name = "collectors"
+version = "0.3.0"
+description = "Self-contained scanners and API search CLIs for exposed AI-agent infrastructure and web surfaces"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "omegaconf>=2.3.0",
+  "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "bandit>=1.8.0",
+  "ruff>=0.8.0",
+  "vulture>=2.11",
+]
+
+[project.scripts]
+collectors = "collectors.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["collectors"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "D"]
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.vulture]
+paths = ["src/collectors"]
+exclude = [".venv/"]
+min_confidence = 60
+

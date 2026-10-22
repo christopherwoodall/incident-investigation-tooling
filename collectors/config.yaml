@@ -1,0 +1,345 @@
+# Unified configuration for all scanners in ./scanners/
+# Every scanner section shares the exact same 9 keys:
+#   base_url:    Primary upstream API endpoint
+#   api_key:     Optional API token resolved from .env / environment
+#   user_agent:  HTTP User-Agent header (defaults to defaults.user_agent)
+#   headers:     Custom HTTP request headers merged with defaults.headers
+#   timeout:     HTTP request timeout in seconds
+#   delay:       Polite delay between requests in seconds
+#   limit:       Maximum records returned per query
+#   queries:     Plain list of search query strings used by `search.py`
+#   scan:        Incremental/explore configuration (`window_hours` and `targets`) used by `scan.py`
+
+schema_version: 1
+
+output:
+  dir: "../data"
+  format: jsonl
+
+defaults: &default_settings
+  user_agent: "Mozilla/5.0 (compatible; incident-investigation-scanners/1.0; +https://github.com/transluce)"
+  headers: &default_headers
+    Accept: "application/json, text/plain, */*"
+    Accept-Language: "en-US,en;q=0.9"
+    Cache-Control: "no-cache"
+  timeout: 60
+  delay: 2
+  limit: 50
+  max_redirects: 5
+  max_response_bytes: 10000000
+  scrape:
+    enabled: false
+    window_hours: 24
+    queries_optional: false
+  search:
+    enabled: false
+    queries_optional: false
+  download:
+    enabled: false
+    queries_optional: false
+
+
+surfaces:
+  urlquery:
+    <<: *default_settings
+    priority: P0
+    notes:
+      - "Requires URLQUERY_API_KEY in .env or host environment"
+    provenance:
+      - "https://urlquery.net"
+    base_url: "https://api.urlquery.net"
+    api_key: "${oc.env:URLQUERY_API_KEY,''}"
+    user_agent: "urlquery-python/1.0"
+    timeout: 60.0
+    delay: 2.0
+    limit: 50
+    scrape:
+      enabled: true
+      window_hours: 24
+      queries_optional: true
+      # queries:
+      #   - "uqscan="
+    search:
+      enabled: true
+      queries:
+        - "uqscan="
+        - "url.fqdn:httpbin.org"
+    download:
+      enabled: true
+      # Accepts report IDs (rep-1234) or URLs for reputation checks
+      # queries:
+      #   - "rep-1234"
+      #   - "https://httpbin.org/get"
+
+  # crtsh:
+  #   priority: P0
+  #   notes:
+  #     - ""
+  #   provenance:
+  #     - ""
+  #   base_url: "https://crt.sh"
+  #   user_agent: "${defaults.user_agent}"
+  #   headers:
+  #     Accept: "application/json"
+  #   timeout: 90.0
+  #   delay: 10.0
+  #   limit: 100
+  #   monitor: {enabled: true, window: "720h"}
+  #   queries:
+  #     - "%.hysandbox.tencent-cloud.com"
+  #     - "%.stepfun-inc.com"
+  #     - "%.x402.dev"
+  #   scan:
+  #     window_hours: 720
+  #     targets: []
+  #   scan: {enabled: true, targets: []}
+
+  jina:
+    <<: *default_settings
+    priority: P0
+    notes:
+      - ""
+    provenance:
+      - "https://swarmcha.se/"
+      - "https://norforge.com/"
+    base_url: "https://r.jina.ai"
+    api_key: "${oc.env:JINA_API_KEY,''}"
+    timeout: 120.0
+    delay: 5
+    # monitor:
+    #   enabled: false
+    #   # window: "24h"
+    # search:
+    #   enabled: true
+    #   base_url: "https://s.jina.ai"
+    #   queries:
+    #     - "uqscan webhook.site"
+    #     - "hysandbox.tencent-cloud.com"
+    #     - "amapdata-b0g3lmf2g1"
+    #     - "MCP Inspector mcp.json"
+    download:
+      enabled: true
+      base_url: "https://r.jina.ai"
+      # Uncomment to automatically download all files from the search results
+      # queries:
+      #   - "https://goto.unm.edu/7t6-o+"
+      #   - "https://agentgateway.pythonanywhere.com/mcp.json"
+      #   - "https://agentsboard.org/llms.txt"
+      #   - "https://agents-agents-agents.com/llms.txt"
+      #   - "https://bboard.ai/llms.txt"
+      #   - "https://tantive.space/skill.md"
+      #   - "https://she-llac.com/CROSS_SITE_CONNECTIONS.md"
+      #   - "https://rentahuman.ai/api/bounties"
+
+
+
+
+
+  shodan:
+    <<: *default_settings
+    priority: P0
+    notes:
+      - "Requires SHODAN_API_KEY in .env or host environment"
+    provenance:
+      - "https://api.shodan.io"
+    base_url: "https://api.shodan.io"
+    api_key: "${oc.env:SHODAN_API_KEY,''}"
+    user_agent: "Shodan-Python/1.31.0"
+    timeout: 60.0
+    delay: 2.0
+    limit: 50
+    scrape:
+      enabled: true
+      window_hours: 168
+      # Uncomment to automatically poll alerts + incremental lookback queries
+      # queries:
+      #   - 'http.title:"Cairn"'
+      #   - "hysandbox.tencent-cloud.com"
+    search:
+      enabled: true
+      # queries:
+      #   - 'http.title:"Cairn"'
+      #   - 'http.html:"mcp.json"'
+    download:
+      enabled: true
+      # Accepts IPs (198.51.100.1), domains (example.org), or "alerts"
+      # queries:
+      #   - "198.51.100.1"
+      #   - "example.org"
+
+
+
+
+
+
+
+
+urlquery:
+  base_url: "https://api.urlquery.net/public/v1"
+  api_key: "${oc.env:URLQUERY_API_KEY,''}"
+  user_agent: "${defaults.user_agent}"
+  headers:
+    Accept: "application/json"
+  timeout: 90.0
+  delay: 3.0
+  limit: 50
+  queries:
+    - "uqscan="
+    - "uqframe="
+    - "webhook.site"
+    - "ntfy.sh/amapdata"
+    - "httpbin.org/base64/"
+    - "url.domain:amap.com"
+    - "pre-amap-pc-ssr.amap.com"
+  scan:
+    window_hours: 24
+    targets: []
+
+yourls:
+  base_url: "https://goto.unm.edu"
+  api_key: ""
+  user_agent: "${defaults.user_agent}"
+  headers:
+    Accept: "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8"
+  timeout: 45.0
+  delay: 3.0
+  limit: 50
+  queries:
+    - "https://goto.unm.edu/7t6-o+"
+    - "https://goto.unm.edu/7t6-m+"
+    - "https://t.mdcdev.me/squarespacefreeemail934785+"
+    - "https://u.ethz.ch/31c3+"
+    - "https://go.uvm.edu/00c+"
+    - "https://url.popcat.xyz/oaitest123/info"
+    - "https://url.popcat.xyz/oaicbs220/info"
+  scan:
+    window_hours: 24
+    targets:
+      - "https://t.mdcdev.me/"
+      - "https://t.mdcdev.me/sitemap.xml"
+      - "https://yourls.space/yourls-api.php?action=stats&format=json&filter=last&limit=100"
+
+shodan:
+  base_url: "https://api.shodan.io"
+  api_key: "${oc.env:SHODAN_API_KEY,''}"
+  user_agent: "Shodan-Python/1.31.0"
+  headers:
+    Accept: "application/json"
+  timeout: 90.0
+  delay: 1.0
+  limit: 50
+  queries:
+    - 'http.title:"Cairn"'
+    - 'http.title:"Strix"'
+    - 'product:"Hermes Agent"'
+    - 'http.title:"OpenHands"'
+    - 'http.title:"OpenDevin"'
+    - 'http.title:"MCP Inspector"'
+    - "ip:45.14.13.147"
+  scan:
+    window_hours: 168
+    targets:
+      - 'http.title:"MCP Inspector"'
+      - 'http.title:"OpenHands"'
+      - 'http.title:"Cairn"'
+      - 'http.title:"Strix"'
+
+wayback:
+  base_url: "http://web.archive.org/cdx/search/cdx"
+  api_key: ""
+  user_agent: "${defaults.user_agent}"
+  headers:
+    Accept: "application/json"
+  timeout: 120.0
+  delay: 5.0
+  limit: 200
+  queries:
+    - "*.hysandbox.tencent-cloud.com/*"
+    - "pre-amap-pc-ssr.amap.com/*"
+    - "amap-pc-ssr.amap.com/ssr/place/*"
+    - "amap-pc-ssr.amap.com/ssr/api/getPoiInfo*"
+    - "httpbin.org/base64/*"
+    - "url.popcat.xyz/oai*"
+  scan:
+    window_hours: 168
+    targets: []
+
+urlscan:
+  base_url: "https://urlscan.io/api/v1"
+  api_key: "${oc.env:URLSCAN_API_KEY,''}"
+  user_agent: "${defaults.user_agent}"
+  headers:
+    Accept: "application/json"
+  timeout: 45.0
+  delay: 2.0
+  limit: 100
+  queries:
+    - 'page.url:"uqscan="'
+    - 'page.url:"uqframe="'
+    - 'page.url:"getPoiInfo"'
+    - 'page.domain:"hysandbox.tencent-cloud.com"'
+    - 'page.domain:"webhook.site"'
+  scan:
+    window_hours: 1
+    targets:
+      - "date:>now-1h"
+
+
+
+ntfy:
+  base_url: "https://ntfy.sh"
+  api_key: ""
+  user_agent: "${defaults.user_agent}"
+  headers:
+    Accept: "application/x-ndjson, application/json"
+  timeout: 25.0
+  delay: 3.0
+  limit: 50
+  queries:
+    - "amapdata-b0g3lmf2g1-0429"
+    - "c6836"
+    - "kz1wu398dnq"
+    - "mha3x"
+    - "o54445"
+    - "pz4kopsh1"
+  scan:
+    window_hours: 12
+    targets: []
+
+reposcout:
+  base_url: "https://api.github.com"
+  api_key: "${oc.env:GITHUB_TOKEN,''}"
+  user_agent: "${defaults.user_agent}"
+  headers:
+    Accept: "application/vnd.github+json, application/json"
+  timeout: 30.0
+  delay: 2.0
+  limit: 200
+  queries:
+    - "github:TIGER-AI-Lab/ClawBench"
+    - "hf:TIGER-Lab/ClawBenchV2Trace"
+  scan:
+    window_hours: 24
+    targets:
+      - "github:TIGER-AI-Lab/ClawBench"
+      - "hf:TIGER-Lab/ClawBenchV2Trace"
+
+packages:
+  base_url: "https://rubygems.org/api/v1"
+  api_key: ""
+  user_agent: "${defaults.user_agent}"
+  headers:
+    Accept: "application/json, application/rss+xml, text/xml"
+  timeout: 45.0
+  delay: 2.0
+  limit: 50
+  queries:
+    - "hysandbox-ats"
+    - "uqscan"
+    - "getpoiinfo"
+    - "oai-client"
+  scan:
+    window_hours: 24
+    targets:
+      - "https://pypi.org/rss/updates.xml"
+      - "https://rubygems.org/api/v1/activity/just_updated.json"

@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service & URL Taxonomy — Editable Matrix</title>
+<style>
+:root {
+  --ink:#10243a; --muted:#5a6f84; --navy:#071727; --navy2:#0e253b; --paper:#f7f9fc; --line:#d8e2ed;
+  --p0:#dc354b; --p1:#f29a38; --p2:#7c6de5; --p3:#3caa83;
+  --a:#d74460; --a-bg:#fff0f3; --b:#db741b; --b-bg:#fff5e9; --c:#258659; --c-bg:#edf9f1;
+  --d:#236bce; --d-bg:#edf6ff; --e:#7652c9; --e-bg:#f5f0ff; --f:#078aab; --f-bg:#ebfaff;
+  --c0:#8090a2; --c1:#9a7b3c; --c2:#137a9b; --c3:#217e58;
+}
+* { box-sizing:border-box; }
+html { background:#07111e; }
+body { margin:0; padding:22px; color:var(--ink); background:linear-gradient(135deg,#07111e,#132940); font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif; }
+.toolbar { max-width:1920px; margin:0 auto 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; color:#dce8f6; font-size:14px; }
+.toolbar .hint { margin-right:auto; opacity:.88; }
+button { border:1px solid #38536f; background:#163450; color:#f5faff; border-radius:10px; padding:10px 15px; font:600 14px system-ui,-apple-system,Segoe UI,Arial,sans-serif; cursor:pointer; box-shadow:0 5px 14px #0002; }
+button:hover { background:#214767; }
+button.primary { background:#087da3; border-color:#2995b8; }
+button.primary:hover { background:#0b91b9; }
+#status { color:#7de0b1; min-width:100px; }
+.poster { width:1920px; max-width:none; margin:0 auto; background:#f3f6fb; border-radius:22px; overflow:hidden; box-shadow:0 24px 80px #0007; }
+.topbar { min-height:112px; padding:23px 27px; color:#f3f8ff; background:linear-gradient(105deg,#071929 0%,#112c45 60%,#0a2138 100%); display:flex; align-items:center; gap:20px; border-bottom:4px solid #2b9dce; }
+.logo { width:58px; height:58px; flex:0 0 58px; border-radius:17px; display:grid; place-items:center; background:#123958; border:1px solid #347aa2; }
+.logo svg { width:34px; height:34px; }
+.heading { flex:1; min-width:0; }
+.kicker { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#73d5f4; font-weight:800; margin-bottom:5px; }
+h1 { margin:0; line-height:1.08; font-size:38px; letter-spacing:-.8px; font-weight:800; }
+.subtitle { font-size:16px; margin-top:8px; color:#c0d2e5; }
+.top-meta { width:365px; border-left:1px solid #426079; padding-left:22px; font-size:15px; line-height:1.55; color:#d0e5f5; }
+.top-meta strong { color:#75d8ff; }
+.principles { display:flex; align-items:center; gap:10px; padding:10px 24px; color:#214158; font-size:13px; background:#e6f5fc; border-bottom:1px solid #c7e4f1; }
+.principles .pill { display:inline-flex; border-radius:7px; padding:5px 9px; background:white; font-weight:800; color:#0d6484; border:1px solid #bbdce9; }
+.principles .explain { margin-left:auto; color:#4d6477; }
+.workspace { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:16px; padding:17px; align-items:start; }
+.main-panel { min-width:0; }
+.panel-head { display:flex; align-items:end; justify-content:space-between; gap:14px; padding:3px 4px 10px; }
+.panel-head h2 { margin:0; color:#102c43; font-size:20px; }
+.panel-head p { margin:0; font-size:12px; color:#64788b; }
+.table-frame { background:#fff; border:1px solid #cedbe7; border-radius:12px; overflow:hidden; box-shadow:0 4px 14px #102c4310; }
+table { width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; font-size:12.5px; }
+col.service { width:21%; } col.classcol { width:13%; } col.cap { width:22%; } col.art { width:18%; } col.roe { width:12%; } col.pri { width:7%; } col.conf { width:7%; }
+thead th { padding:11px 9px; text-align:left; color:#dceafa; background:#102b43; font-size:11.5px; letter-spacing:.25px; line-height:1.2; border-right:1px solid #2c4963; }
+thead th:last-child { border-right:0; }
+thead small { display:block; font-weight:500; font-size:10px; color:#93b5d2; margin-top:4px; }
+tbody tr.data-row td { padding:6px 9px; line-height:1.23; border-bottom:1px solid #dfe7ef; border-right:1px solid #e8edf3; vertical-align:middle; overflow-wrap:anywhere; }
+tbody tr.data-row td:last-child { border-right:0; }
+tbody tr.data-row:last-child td { border-bottom:0; }
+tbody tr.data-row:hover td { filter:brightness(.985); }
+.group-row td { padding:8px 11px; font-size:12px; font-weight:800; letter-spacing:.25px; color:#fff; border-top:1px solid #ffffffb0; border-bottom:1px solid #ffffffb0; }
+.group-row:first-child td { border-top:0; }
+.group-row .group-label { display:flex; align-items:center; gap:9px; }
+.group-row .letter { display:inline-grid; place-items:center; background:#ffffff2a; border:1px solid #ffffff80; border-radius:7px; width:25px; height:25px; font-size:13px; }
+.group-row .group-desc { font-size:11px; font-weight:500; opacity:.92; margin-left:auto; }
+.cat-a .group-row td { background:var(--a); } .cat-a tr.data-row td { background:var(--a-bg); }
+.cat-b .group-row td { background:var(--b); } .cat-b tr.data-row td { background:var(--b-bg); }
+.cat-c .group-row td { background:var(--c); } .cat-c tr.data-row td { background:var(--c-bg); }
+.cat-d .group-row td { background:var(--d); } .cat-d tr.data-row td { background:var(--d-bg); }
+.cat-e .group-row td { background:var(--e); } .cat-e tr.data-row td { background:var(--e-bg); }
+.cat-f .group-row td { background:var(--f); } .cat-f tr.data-row td { background:var(--f-bg); }
+.service-name { display:block; font-weight:800; color:#122f49; }
+.service-sub { display:block; color:#63788d; font-size:10.5px; margin-top:2px; font-weight:500; }
+.class-name { font-weight:800; color:#24465f; }
+.capabilities { color:#294d67; }
+.artifacts { color:#526a7e; }
+.metric { color:#17354c; font-weight:800; letter-spacing:.1px; white-space:nowrap; }
+.pbadge,.cbadge { display:inline-flex; justify-content:center; align-items:center; min-width:35px; padding:4px 7px; border-radius:6px; font-size:11px; font-weight:900; line-height:1; white-space:nowrap; }
+.p0 { background:#f9dce1; color:#a91930; border:1px solid #f0b8c2; }
+.p1 { background:#ffebd1; color:#9c4e04; border:1px solid #f5d2a3; }
+.p2 { background:#eae6ff; color:#5740b1; border:1px solid #d3cafb; }
+.p3 { background:#dff6e9; color:#1e7a53; border:1px solid #b8e9cf; }
+.c3 { background:#dff6e9; color:#1e7a53; border:1px solid #b8e9cf; }
+.c2 { background:#dff4fa; color:#086c89; border:1px solid #b9e5ef; }
+.c1 { background:#f1eadb; color:#79602d; border:1px solid #e2d3b2; }
+.c0 { background:#edf0f4; color:#58697b; border:1px solid #d7dfe7; }
+.sidebar { display:flex; flex-direction:column; gap:12px; }
+.side-card { background:#fff; border:1px solid #d1deea; border-radius:12px; overflow:hidden; box-shadow:0 4px 14px #102c4310; }
+.side-title { padding:12px 14px; background:#102b43; color:#f4f8fc; font-size:14px; font-weight:850; display:flex; align-items:center; gap:9px; }
+.side-title .mini-icon { font-size:18px; }
+.side-body { padding:12px; }
+.watch-card { border:2px solid #e7a5af; }
+.watch-card .side-title { background:#9f2337; }
+.watch-note { color:#74414a; font-size:11.5px; background:#fff0f2; padding:8px 11px; line-height:1.35; border-bottom:1px solid #f1ccd2; }
+.watch-list { list-style:none; margin:0; padding:9px 10px 10px; }
+.watch-list li { display:grid; grid-template-columns:27px 1fr; gap:8px; padding:8px 3px; border-bottom:1px solid #edf0f4; align-items:start; }
+.watch-list li:last-child { border-bottom:0; }
+.rank { width:25px; height:25px; display:grid; place-items:center; border-radius:50%; background:#c83148; color:white; font-weight:900; font-size:12px; }
+.watch-name { color:#153a58; font-size:12px; font-weight:850; }
+.watch-why { color:#65788a; font-size:10.5px; margin-top:2px; line-height:1.3; }
+.legend-row { display:flex; align-items:center; gap:8px; font-size:11.5px; color:#40586d; margin:7px 0; }
+.legend-row:last-child { margin-bottom:0; }
+.legend-row .desc { flex:1; }
+.side-note { font-size:10.5px; color:#6a7e91; margin-top:8px; line-height:1.4; }
+.scales { display:grid; grid-template-columns:25px 1fr; gap:7px 8px; font-size:11.5px; align-items:start; }
+.scale-code { color:#0a789d; font-weight:900; }
+.scale-desc { color:#425d73; line-height:1.3; }
+.framework-grid { display:grid; grid-template-columns:54px 1fr; gap:7px 8px; font-size:11.5px; }
+.framework-grid strong { color:#164262; }
+.framework-grid span { color:#526b80; }
+.bottomline { background:#0c2236; margin:0 17px 17px; border-radius:12px; color:#eaf4fc; padding:13px 16px; display:grid; grid-template-columns:repeat(5,1fr); gap:8px; border:1px solid #25445e; }
+.step { display:grid; grid-template-columns:35px 1fr; gap:9px; align-items:center; padding:4px 8px; border-right:1px solid #345168; }
+.step:last-child { border-right:0; }
+.step-num { width:32px; height:32px; display:grid; place-items:center; border-radius:50%; background:#153e5d; color:#80defb; border:1px solid #38799c; font-weight:900; }
+.step strong { display:block; font-size:12px; color:#8ee1ff; margin-bottom:3px; }
+.step span { display:block; font-size:10px; line-height:1.3; color:#c1d4e4; }
+.footer { display:flex; justify-content:space-between; padding:0 24px 16px; color:#73869a; font-size:10.5px; gap:10px; }
+[contenteditable="true"] { outline:1px dashed transparent; outline-offset:2px; border-radius:2px; cursor:text; }
+[contenteditable="true"]:hover { outline-color:#56a9d2; }
+[contenteditable="true"]:focus { outline:2px solid #1497c4; background:#fff !important; color:#10243a !important; }
+.poster.exporting [contenteditable="true"] { outline:none !important; }
+.poster.exporting [contenteditable="true"]:focus { background:inherit !important; }
+.small-print { font-size:10px; color:#6a7b8e; }
+@media (max-width: 900px) {
+  body { padding:10px; overflow-x:auto; }
+  .toolbar { min-width:760px; }
+  .poster { margin:0; }
+}
+@media print {
+  body { padding:0; background:white; }
+  .toolbar { display:none; }
+  .poster { box-shadow:none; border-radius:0; }
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="hint"><strong>Editable matrix</strong> · Click any label or cell to change it. Use the PNG button to export the current version.</div>
+  <button id="toggleEdit" type="button">Toggle edit outlines</button>
+  <button id="reset" type="button">Reset original text</button>
+  <button id="export" class="primary" type="button">Export PNG · 2×</button>
+  <span id="status" role="status" aria-live="polite"></span>
+</div>
+
+<main class="poster" id="poster">
+  <header class="topbar">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none"><path d="M24 3 41 9v12c0 10.6-7 18.4-17 24C14 39.4 7 31.6 7 21V9L24 3Z" fill="#36B6E8" stroke="#A6E8FF" stroke-width="1.5"/><path d="M24 11 33 14v7c0 6.3-3.6 11.1-9 14.5-5.4-3.4-9-8.2-9-14.5v-7l9-3Z" fill="#0E2940"/><path d="m19 23 3.4 3.4 7-8" stroke="#C7F6FF" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="heading">
+      <div class="kicker" contenteditable="true" spellcheck="false">Defensive collection framework · Working taxonomy</div>
+      <h1 contenteditable="true" spellcheck="false">Service &amp; URL Taxonomy</h1>
+      <div class="subtitle" contenteditable="true" spellcheck="false">Unified service classification · MISP / STIX alignment · ATT&amp;CK / ATLAS behavior mapping</div>
+    </div>
+    <div class="top-meta" contenteditable="true" spellcheck="false">
+      <strong>Know what each service does.</strong><br>
+      Separate technical capability from observed use.<br>
+      Prioritize evidence—not assumptions.
+    </div>
+  </header>
+
+  <div class="principles">
+    <span class="pill">CLASS = what it is</span>
+    <span class="pill">CAPABILITIES = what it can do</span>
+    <span class="pill">P = collection order</span>
+    <span class="pill">C = evidence confidence</span>
+    <span class="explain" contenteditable="true" spellcheck="false">P0 means collect first — it does not mean malicious.</span>
+  </div>
+
+  <div class="workspace">
+    <section class="main-panel">
+      <div class="panel-head">
+        <h2 contenteditable="true" spellcheck="false">Service inventory &amp; collection matrix</h2>
+        <p contenteditable="true" spellcheck="false">R = retention · O = external observability · E = execution capability</p>
+      </div>
+      <div class="table-frame">
+        <table class="matrix" id="matrix">
+          <colgroup><col class="service"><col class="classcol"><col class="cap"><col class="art"><col class="roe"><col class="pri"><col class="conf"></colgroup>
+          <thead><tr>
+            <th>Service / URL<small>named host or explicit unknown</small></th>
+            <th>Primary class<small>one controlled value</small></th>
+            <th>Capabilities / operations<small>normal function, not intent</small></th>
+            <th>Input → outputs / artifacts<small>where known</small></th>
+            <th>R / O / E<small>scale below</small></th>
+            <th>Priority<small>build order</small></th>
+            <th>Conf.<small>evidence</small></th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <section class="side-card watch-card">
+        <div class="side-title"><span class="mini-icon">◉</span><span contenteditable="true" spellcheck="false">Watch first · P0 collection targets</span></div>
+        <div class="watch-note" contenteditable="true" spellcheck="false">Highest evidence value or incident relevance. Priority is not a claim that the service itself is malicious.</div>
+        <ol class="watch-list" id="watchlist"></ol>
+      </section>
+
+      <section class="side-card">
+        <div class="side-title"><span class="mini-icon">▤</span><span contenteditable="true" spellcheck="false">Priority legend</span></div>
+        <div class="side-body">
+          <div class="legend-row"><span class="pbadge p0">P0</span><span class="desc">Core — collect first</span></div>
+          <div class="legend-row"><span class="pbadge p1">P1</span><span class="desc">High — next wave</span></div>
+          <div class="legend-row"><span class="pbadge p2">P2</span><span class="desc">Medium — expand / correlate</span></div>
+          <div class="legend-row"><span class="pbadge p3">P3</span><span class="desc">Candidate — validate first</span></div>
+          <div class="side-note">Priority measures expected collection value and implementation order, not threat severity.</div>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <div class="side-title"><span class="mini-icon">◌</span><span contenteditable="true" spellcheck="false">Evidence confidence</span></div>
+        <div class="side-body">
+          <div class="legend-row"><span class="cbadge c3">C3</span><span class="desc">Direct owner / primary-source confirmation</span></div>
+          <div class="legend-row"><span class="cbadge c2">C2</span><span class="desc">Detailed reporting; qualification may remain</span></div>
+          <div class="legend-row"><span class="cbadge c1">C1</span><span class="desc">Suggestive or partly verified</span></div>
+          <div class="legend-row"><span class="cbadge c0">C0</span><span class="desc">Candidate only / association unverified</span></div>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <div class="side-title"><span class="mini-icon">◷</span><span contenteditable="true" spellcheck="false">R / O / E scale</span></div>
+        <div class="side-body scales">
+          <div class="scale-code">R</div><div class="scale-desc"><b>Retention</b> · R0 no persistent artifact established; R1 cache/ephemeral; R2 service record/report; R3 durable/versioned; R? unknown.</div>
+          <div class="scale-code">O</div><div class="scale-desc"><b>Observability</b> · O0 little external evidence; O1 response/URL; O2 metadata/history/report; O3 rich scan telemetry; O? unknown.</div>
+          <div class="scale-code">E</div><div class="scale-desc"><b>Execution</b> · E0 no relevant execution; E1 fetch/parse; E2 browser render/page script; E3 controlled build/runtime; E? unknown.</div>
+          <div class="side-note" style="grid-column:1/-1">Scores are working estimates; score individual components separately where a platform hosts different products.</div>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <div class="side-title"><span class="mini-icon">⌘</span><span contenteditable="true" spellcheck="false">Standards mapping</span></div>
+        <div class="side-body framework-grid">
+          <strong>MISP</strong><span>Native URL/domain/file attributes + local service taxonomy.</span>
+          <strong>STIX 2.1</strong><span>SCO observables + observed-data + report; indicator only for a detection pattern.</span>
+          <strong>ATT&amp;CK</strong><span>Map observed cyber behavior—not a service's name.</span>
+          <strong>ATLAS</strong><span>Map AI-specific behaviors only when evidence supports them.</span>
+        </div>
+        <div class="side-note" style="padding:0 12px 12px">Do not label a content fetcher as a network proxy without evidence of traffic forwarding. Do not label a public repository as exfiltration without evidence of data transfer.</div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="bottomline">
+    <div class="step"><div class="step-num">1</div><div><strong contenteditable="true" spellcheck="false">Classify</strong><span contenteditable="true" spellcheck="false">Assign one primary class and controlled capabilities.</span></div></div>
+    <div class="step"><div class="step-num">2</div><div><strong contenteditable="true" spellcheck="false">Enrich</strong><span contenteditable="true" spellcheck="false">Add source provenance, timestamps and observable IDs.</span></div></div>
+    <div class="step"><div class="step-num">3</div><div><strong contenteditable="true" spellcheck="false">Monitor</strong><span contenteditable="true" spellcheck="false">Start with high-value sources and supported APIs.</span></div></div>
+    <div class="step"><div class="step-num">4</div><div><strong contenteditable="true" spellcheck="false">Investigate</strong><span contenteditable="true" spellcheck="false">Correlate events; verify the behavior and impact.</span></div></div>
+    <div class="step"><div class="step-num">5</div><div><strong contenteditable="true" spellcheck="false">Exchange</strong><span contenteditable="true" spellcheck="false">Publish defensible findings through MISP / STIX.</span></div></div>
+  </div>
+  <div class="footer">
+    <span contenteditable="true" spellcheck="false">SERVICE TAXONOMY · WORKING DRAFT · 21 OCT 2026</span>
+    <span contenteditable="true" spellcheck="false">Unverified hostnames are explicitly marked. Recheck provider retention, APIs, and technique IDs before operational use.</span>
+  </div>
+</main>
+
+<script>
+const groups = [
+  {id:'a', letter:'A', title:'Retrieval, analysis & browser services', desc:'Fetch · transform · render · scan', rows:[
+    ['URLQuery — urlquery.net','analyzer','fetch · render · scan · telemetry','URL → scan report, screenshots, redirects, HTTP/DNS/IP evidence','R2 / O3 / E2','P0','C2'],
+    ['Jina Reader — r.jina.ai','fetcher','fetch · transform · cache','URL → extracted text / Markdown','R1 / O1 / E1–E2','P1','C2'],
+    ['Jina Search — s.jina.ai','search_service','search · fetch · transform','Query → search results / readable text; validate exact interface','R? / O1 / E?','P2','C1'],
+    ['Markdown.new — markdown.new','transformer','fetch · transform','URL/resource → Markdown or readable content','R? / O1 / E?','P1','C2'],
+    ['Browserless — browserless.io','browser','render · automate · screenshot · execute','URL/session → page content, screenshot, PDF, download','R1 / O1 / E2–E3','P1','C2'],
+    ['HTTPBin — httpbin.org','diagnostic','HTTP echo · inspect request/response','HTTP request → diagnostic response','R0–R1 / O1 / E0','P1','C2'],
+    ['Embed Web Playground — GitHub Pages','unknown','unverified','Public web tool; incident role needs validation','R? / O? / E?','P1','C1'],
+    ['Blogsflow — blogsflow.liftbrandfulfillment.com','unknown','unverified','Host referenced in reporting; service role unclear','R? / O? / E?','P2','C1']
+  ]},
+  {id:'b', letter:'B', title:'Wikis & collaboration', desc:'Messages · shared state · revision history', rows:[
+    ['DSEWiki / ProWiki — canonical host to verify','collaboration','message · publish · version','Public wiki pages and revision history','R3 / O2 / E0–E1','P0','C2'],
+    ['publictestwiki.com','collaboration','message · publish · version','Public test wiki and page revisions','R3 / O2 / E0–E1','P1','C2'],
+    ['FractalWiki — hostname unverified','collaboration','unverified','Named in wider reporting; verify canonical host','R? / O? / E?','P1','C1'],
+    ['ProbierWiki — hostname unverified','collaboration','unverified','Named in wider reporting; verify canonical host','R? / O? / E?','P1','C1']
+  ]},
+  {id:'c', letter:'C', title:'Registries, repositories & build services', desc:'Publish · version · store · build', rows:[
+    ['RubyGems — rubygems.org','repository','publish · version · fetch','Ruby package versions and metadata; upload allegations disputed','R3 / O2 / E0','P0','C2'],
+    ['RubyDoc — rubydoc.info','build_service','fetch · build · publish','Source/package → generated documentation; execution depends on build boundary','R2 / O2 / E1–E3*','P0','C2'],
+    ['Hugging Face — huggingface.co','repository','publish · version · fetch','Models, datasets, Spaces and related artifacts; running Spaces are separate','R3 / O2 / E0–E3*','P0','C3'],
+    ['GitHub — github.com','repository','publish · version · fetch · collaborate','Repositories, commits, issues and releases; workflow runners are separate','R3 / O2 / E0','P0','C3'],
+    ['GitHub Gist — gist.github.com','storage','publish · fetch · store','Hosted text/code snippets','R3 / O2 / E0','P1','C1'],
+    ['OpenAI Artifactory — internal URL not supplied','repository','fetch · publish · store','Internal artifact records; incident reporting describes communication / egress use','R2–R3 / O3* / E0','P0','C3']
+  ]},
+  {id:'d', letter:'D', title:'Identity, storage & network intermediaries', desc:'Inbox · upload · store · redirect · forward', rows:[
+    ['mail.gw','identity_service','message · store','Temporary inbox and verification messages','R1–R2 / O1–O2 / E0','P1','C2'],
+    ['Temporary file hosts — no host confirmed','storage','upload · store · fetch','File upload → temporary download link','R1–R2 / O0–O2 / E0','P1','C1'],
+    ['Public object storage — endpoint unspecified','storage','upload · store · fetch','Object upload/download; provider logs require authorized access','R2–R3 / O1–O3* / E0','P1','C1'],
+    ['Public paste services — no single host','storage','publish · fetch · store','Hosted text/code artifact','R1–R3 / O1–O2 / E0','P1','C1'],
+    ['YOURLS — no instance confirmed','relay','redirect','Short URL → destination URL; candidate category only','R0–R2 / O0–O2 / E0','P3','C0'],
+    ['Network proxies / tunnels — no endpoint','relay','forward','Network traffic forwarding; exact endpoint not identified','R? / O? / E?','P2','C0'],
+    ['Cloud-provider egress — telemetry category','network_context','connect · route context','Outbound connection/IP/ASN context; weak attribution alone','R0–R2 / O1–O3* / E0','P2','C1']
+  ]},
+  {id:'e', letter:'E', title:'Destination APIs, libraries & public data', desc:'The target being accessed—not necessarily an intermediary', rows:[
+    ['Data USA API — api.datausa.io','data_source','serve_api · fetch','API query → public statistical data','R3 / O1 / E0','P1','C2'],
+    ['UNM Digital Library — nmdigital.unm.edu','data_source','fetch · serve content','Page/media request → digital-library content','R3 / O1–O2 / E0–E1','P1','C2'],
+    ['AIHW Tableau — viz*.aihw.gov.au','data_source','serve_api · fetch','Dashboard/data request → rendered data or file; verify exact host','R3 / O1–O2 / E0–E2','P1','C2'],
+    ['Thailand ONCB statistics API — exact URL unknown','data_source','serve_api','Query → public statistics; endpoint must be extracted from source','R? / O? / E?','P2','C1'],
+    ['UN Trade & Development statistics — URL unknown','data_source','serve_api · fetch','Query → public statistical data; exact endpoint not established','R? / O? / E?','P2','C1'],
+    ['Theme-park data sites — no host identified','data_source','fetch','Web/API query → public data; category-level reference only','R? / O? / E?','P2','C1']
+  ]},
+  {id:'f', letter:'F', title:'Threat intelligence & reporting sources', desc:'Research · incident timeline · evidence provenance', rows:[
+    ['Transluce — transluce.org/agent-activity','intelligence_source','report · dataset · timeline','URLQuery evidence, timelines and source links','R3 / O2 / E0','P0','C3'],
+    ['OpenAI — Hugging Face incident report','intelligence_source','report · timeline','First-party incident account and supporting claims','R3 / O2 / E0','P0','C3'],
+    ['OpenAI — Misalignment Reports','intelligence_source','report · research','Incident disclosures and research material','R3 / O2 / E0','P0','C3'],
+    ['OpenAI — third-party impact reporting (URL verify)','intelligence_source','report · updates','Keep separate claims/cases; verify canonical source URL','R? / O? / E?','P1','C1'],
+    ['collusion.wiki','intelligence_source','report · dataset · timeline','Independent reconstruction of public wiki activity','R3 / O2 / E0','P0','C2'],
+    ['RubyHack — rubyhack.ai','intelligence_source','report · investigation','Independent RubyGems/RubyDoc allegations; retain disputed status','R3 / O2 / E0','P0','C2'],
+    ['Anthropic — Sept 2026 threat report','intelligence_source','report · research · indicators','Supplemental AI-misuse reporting; separate cases unless correlated','R3 / O2 / E0','P1','C2']
+  ]}
+];
+const groupColors={a:'#d74460',b:'#db741b',c:'#258659',d:'#236bce',e:'#7652c9',f:'#078aab'};
+function editable(text, cls=''){ return `<span class="${cls}" contenteditable="true" spellcheck="false">${text}</span>`; }
+function buildMatrix(){
+  const tbody=document.getElementById('rows');
+  tbody.innerHTML='';
+  groups.forEach(g=>{
+    const gr=document.createElement('tr'); gr.className='group-row'; gr.style.setProperty('--group-color',groupColors[g.id]);
+    gr.innerHTML=`<td colspan="7"><div class="group-label"><span class="letter">${g.letter}</span><span contenteditable="true" spellcheck="false">${g.title}</span><span class="group-desc" contenteditable="true" spellcheck="false">${g.desc}</span><span class="group-desc">${g.rows.length} records</span></div></td>`;
+    // Group backgrounds are set through category-specific classes on the table rows.
+    gr.classList.add('group-'+g.id);
+    tbody.appendChild(gr);
+    g.rows.forEach((r,i)=>{
+      const tr=document.createElement('tr'); tr.className=`data-row catrow-${g.id}`;
+      const p=r[5].toLowerCase(), c=r[6].toLowerCase();
+      tr.innerHTML=`
+        <td>${editable(r[0],'service-name')}</td>
+        <td>${editable(r[1],'class-name')}</td>
+        <td>${editable(r[2],'capabilities')}</td>
+        <td>${editable(r[3],'artifacts')}</td>
+        <td>${editable(r[4],'metric')}</td>
+        <td style="text-align:center">${editable(r[5],`pbadge ${p}`)}</td>
+        <td style="text-align:center">${editable(r[6],`cbadge ${c}`)}</td>`;
+      tr.dataset.group=g.id;
+      tbody.appendChild(tr);
+    });
+  });
+  // Color group rows and table rows by category without hard-coded per-cell markup.
+  const map={a:['#d74460','#fff0f3'],b:['#db741b','#fff5e9'],c:['#258659','#edf9f1'],d:['#236bce','#edf6ff'],e:['#7652c9','#f5f0ff'],f:['#078aab','#ebfaff']};
+  tbody.querySelectorAll('.group-row').forEach(tr=>{const g=tr.className.match(/group-([a-f])/)[1];tr.style.background=map[g][0];tr.querySelector('td').style.background=map[g][0];});
+  tbody.querySelectorAll('.data-row').forEach(tr=>{const g=tr.dataset.group; [...tr.cells].forEach(td=>td.style.background=map[g][1]);tr.cells[0].style.borderLeft=`4px solid ${map[g][0]}`;});
+}
+const watch=[
+ ['urlquery.net','Analyzer · persistent scan evidence'],
+ ['DSEWiki / ProWiki','Collaboration · shared public state'],
+ ['OpenAI Artifactory','Repository · internal telemetry only'],
+ ['rubygems.org','Repository · publication monitoring; claims disputed'],
+ ['rubydoc.info','Build service · validate build boundary'],
+ ['huggingface.co','Repository · disclosed incident relevance'],
+ ['github.com','Repository · durable artifacts and incident evidence'],
+ ['Transluce — Agent Activity','Intelligence source · high-value dataset']
+];
+function buildWatch(){
+ const ol=document.getElementById('watchlist'); ol.innerHTML='';
+ watch.forEach((r,i)=>{const li=document.createElement('li');li.innerHTML=`<span class="rank">${i+1}</span><div><div class="watch-name" contenteditable="true" spellcheck="false">${r[0]}</div><div class="watch-why" contenteditable="true" spellcheck="false">${r[1]}</div></div>`;ol.appendChild(li);});
+}
+buildMatrix(); buildWatch();
+document.getElementById('poster').addEventListener('input', (event) => {
+  const el = event.target;
+  if (el.classList && el.classList.contains('pbadge')) {
+    el.classList.remove('p0','p1','p2','p3');
+    const v=el.textContent.trim().toLowerCase(); if(['p0','p1','p2','p3'].includes(v)) el.classList.add(v);
+  }
+  if (el.classList && el.classList.contains('cbadge')) {
+    el.classList.remove('c0','c1','c2','c3');
+    const v=el.textContent.trim().toLowerCase(); if(['c0','c1','c2','c3'].includes(v)) el.classList.add(v);
+  }
+});
+// Save the original rendered HTML so the user can undo editing without reloading.
+const originalPoster = document.getElementById('poster').innerHTML;
+document.getElementById('reset').addEventListener('click',()=>{
+  if(!confirm('Reset all text and table edits to the original version?')) return;
+  document.getElementById('poster').innerHTML=originalPoster;
+  // Rebuild interactive rows after restoring the initial template.
+  document.getElementById('rows').innerHTML='';
+  buildMatrix(); buildWatch();
+  status('Original text restored.');
+});
+let outlines=true;
+document.getElementById('toggleEdit').addEventListener('click',()=>{
+  outlines=!outlines;
+  document.getElementById('poster').classList.toggle('no-edit-hints',!outlines);
+  status(outlines?'Edit outlines enabled.':'Edit outlines hidden.');
+});
+function status(msg){const e=document.getElementById('status');e.textContent=msg;setTimeout(()=>{if(e.textContent===msg)e.textContent='';},3500);}
+document.getElementById('export').addEventListener('click',exportPNG);
+function roundedRect(ctx, x, y, w, h, radius) {
+  const r=Math.max(0,Math.min(radius,Math.min(w,h)/2));
+  ctx.beginPath();
+  if (typeof ctx.roundRect === 'function') ctx.roundRect(x,y,w,h,r);
+  else ctx.rect(x,y,w,h);
+}
+function colorHasAlpha(color) {
+  if (!color || color === 'transparent') return false;
+  const m=color.match(/^rgba\([^)]*,\s*([0-9.]+)\s*\)$/i);
+  return !m || Number(m[1]) > 0;
+}
+function fillElementBackground(ctx, el, r) {
+  if (r.width <= 0 || r.height <= 0) return;
+  const cs=getComputedStyle(el);
+  const radius=parseFloat(cs.borderTopLeftRadius)||0;
+  if (cs.backgroundColor && colorHasAlpha(cs.backgroundColor)) {
+    roundedRect(ctx,r.left,r.top,r.width,r.height,radius);
+    ctx.fillStyle=cs.backgroundColor; ctx.fill();
+  }
+  const bg=cs.backgroundImage;
+  if (bg && bg.startsWith('linear-gradient')) {
+    const colors=[...bg.matchAll(/(rgba?\([^)]*\)|#[0-9a-fA-F]{3,8})/g)].map(m=>m[1]);
+    if (colors.length) {
+      let grad;
+      // The infographic uses horizontal gradients; keep export independent of external assets.
+      grad=ctx.createLinearGradient(r.left,r.top,r.right,r.top);
+      if (colors.length===1) { grad.addColorStop(0,colors[0]); grad.addColorStop(1,colors[0]); }
+      else colors.forEach((c,i)=>grad.addColorStop(i/(colors.length-1),c));
+      roundedRect(ctx,r.left,r.top,r.width,r.height,radius); ctx.fillStyle=grad; ctx.fill();
+    }
+  }
+}
+function strokeElementBorders(ctx, el, r) {
+  if (r.width <= 0 || r.height <= 0) return;
+  const cs=getComputedStyle(el);
+  const sides=[
+    ['borderTopWidth','borderTopStyle','borderTopColor',r.left,r.top,r.right,r.top],
+    ['borderRightWidth','borderRightStyle','borderRightColor',r.right,r.top,r.right,r.bottom],
+    ['borderBottomWidth','borderBottomStyle','borderBottomColor',r.left,r.bottom,r.right,r.bottom],
+    ['borderLeftWidth','borderLeftStyle','borderLeftColor',r.left,r.top,r.left,r.bottom]
+  ];
+  for(const [wk,sk,ck,x1,y1,x2,y2] of sides){
+    const width=parseFloat(cs[wk])||0, style=cs[sk], color=cs[ck];
+    if(width<=0 || style==='none' || !colorHasAlpha(color)) continue;
+    ctx.beginPath(); ctx.lineWidth=width; ctx.strokeStyle=color;
+    if(style==='dashed') ctx.setLineDash([4,3]); else if(style==='dotted') ctx.setLineDash([1.5,2]); else ctx.setLineDash([]);
+    ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  }
+  ctx.setLineDash([]);
+}
+async function drawInlineSVGs(ctx, root) {
+  const items=[...root.querySelectorAll('svg')];
+  await Promise.all(items.map(async svgEl=>{
+    const r=svgEl.getBoundingClientRect(); if(!r.width || !r.height) return;
+    const svg=svgEl.cloneNode(true);
+    if(!svg.getAttribute('xmlns')) svg.setAttribute('xmlns','http://www.w3.org/2000/svg');
+    const xml=new XMLSerializer().serializeToString(svg);
+    const url=URL.createObjectURL(new Blob([xml],{type:'image/svg+xml;charset=utf-8'}));
+    try {
+      const img=new Image();
+      await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('An inline icon could not be drawn.'));img.src=url;});
+      ctx.drawImage(img,r.left,r.top,r.width,r.height);
+    } finally { URL.revokeObjectURL(url); }
+  }));
+}
+function drawTextNodes(ctx, root) {
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  const nodes=[]; let n;
+  while((n=walker.nextNode())) nodes.push(n);
+  for(const node of nodes){
+    const el=node.parentElement; if(!el || !node.nodeValue || !node.nodeValue.length || el.closest('svg')) continue;
+    const cs=getComputedStyle(el);
+    if(cs.display==='none' || cs.visibility==='hidden' || Number(cs.opacity)===0) continue;
+    const fs=parseFloat(cs.fontSize)||12;
+    ctx.font=cs.font || `${cs.fontStyle} ${cs.fontWeight} ${fs}px ${cs.fontFamily}`;
+    ctx.fillStyle=cs.color || '#10243a'; ctx.textBaseline='alphabetic';
+    ctx.globalAlpha=Math.max(0,Math.min(1,Number(cs.opacity)||1));
+    try { ctx.letterSpacing=cs.letterSpacing; } catch(e) {}
+    const range=document.createRange(); let currentTop=null, line='', startX=0;
+    const flush=()=>{
+      if(!line) return;
+      let out=line;
+      if(cs.textTransform==='uppercase') out=out.toUpperCase();
+      else if(cs.textTransform==='lowercase') out=out.toLowerCase();
+      else if(cs.textTransform==='capitalize') out=out.replace(/\b\w/g,ch=>ch.toUpperCase());
+      ctx.fillText(out,startX,currentTop+fs*0.84);
+      line='';
+    };
+    for(let i=0;i<node.nodeValue.length;i++){
+      range.setStart(node,i); range.setEnd(node,i+1);
+      const cr=range.getBoundingClientRect(); const ch=node.nodeValue[i];
+      if(!cr || (!cr.width && !/\s/.test(ch))) continue;
+      const top=Math.round(cr.top*2)/2;
+      if(currentTop!==null && Math.abs(top-currentTop)>1){ flush(); currentTop=null; }
+      if(currentTop===null){ currentTop=top; startX=cr.left; }
+      // Leading collapsed whitespace has no box; don't paint it at the start of a line.
+      if(!line && /\s/.test(ch) && cr.width===0) continue;
+      line+=ch;
+    }
+    flush();
+    ctx.globalAlpha=1;
+  }
+}
+async function exportPNG(){
+  const poster=document.getElementById('poster');
+  const btn=document.getElementById('export');
+  btn.disabled=true; btn.textContent='Rendering PNG…'; status('Rendering the current editable layout…');
+  try {
+    // Render the live DOM into a canvas without remote libraries, fonts, or services.
+    // This avoids SVG foreignObject canvas-taint restrictions and keeps the HTML standalone.
+    const rect=poster.getBoundingClientRect();
+    const w=poster.offsetWidth, h=poster.offsetHeight || poster.scrollHeight, scale=2;
+    const canvas=document.createElement('canvas'); canvas.width=w*scale; canvas.height=h*scale;
+    const ctx=canvas.getContext('2d');
+    ctx.setTransform(scale,0,0,scale,-rect.left*scale,-rect.top*scale);
+    ctx.fillStyle='#f3f6fb'; ctx.fillRect(rect.left,rect.top,w,h);
+    ctx.save(); roundedRect(ctx,rect.left,rect.top,w,h,22); ctx.clip();
+    const all=[poster,...poster.querySelectorAll('*')];
+    // Paint backgrounds in DOM order first, then borders, icons and live text.
+    for(const el of all){ const r=el.getBoundingClientRect(); fillElementBackground(ctx,el,r); }
+    for(const el of all){ const r=el.getBoundingClientRect(); strokeElementBorders(ctx,el,r); }
+    await drawInlineSVGs(ctx,poster);
+    drawTextNodes(ctx,poster);
+    ctx.restore();
+    const png=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG encoding failed.')), 'image/png'));
+    const url=URL.createObjectURL(png); const a=document.createElement('a'); a.href=url; a.download='service_url_taxonomy.png'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500); status(`PNG exported at ${w*scale} × ${h*scale}px.`);
+  } catch(err) {
+    console.error(err); status('PNG export failed: '+err.message+'. You can also use Print → Save as PDF.');
+  } finally { btn.disabled=false; btn.textContent='Export PNG · 2×'; }
+}
+</script>
+</body>
+</html>

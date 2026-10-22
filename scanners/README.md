@@ -1,4 +1,11 @@
-# Scanners
+# Collectors
+
+A lightweight, configurable public-surface intelligence collection framework. It provides scriptable collectors for monitoring new events, searching existing indexes, and retrieving specific public artifacts, with normalized JSONL output.
+
+---
+
+
+
 
 Self-contained telemetry collectors and search CLIs for investigating autonomous AI-agent activity across host banners, URL sandboxes, link shorteners, web pages, web archives, Certificate Transparency logs, pub/sub dead-drops, repository file trees, and package registries.
 

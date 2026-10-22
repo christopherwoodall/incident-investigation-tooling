@@ -1,0 +1,28 @@
+urlquery:
+  priority: P0
+  notes:
+    - "Requires URLQUERY_API_KEY in .env or host environment"
+  provenance:
+    - "https://urlquery.net"
+  base_url: "https://api.urlquery.net"
+  api_key: "${oc.env:URLQUERY_API_KEY,''}"
+  user_agent: "urlquery-python/1.0"
+  timeout: 60.0
+  delay: 2.0
+  limit: 50
+  scrape:
+    enabled: true
+    window_hours: 24
+    queries_optional: true
+  search:
+    enabled: true
+    # A list of queries to search for reports.
+    # queries:
+    #   - "uqscan="
+    #   - "url.fqdn:httpbin.org"
+  download:
+    enabled: true
+    # Accepts report IDs (rep-1234) or URLs for reputation checks
+    # queries:
+    #   - "rep-1234"
+    #   - "https://httpbin.org/get"
